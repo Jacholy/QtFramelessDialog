@@ -85,11 +85,11 @@ void CFramelessDialog::internalShowBorder(bool show, int borderWidth, QColor col
     }
 
     if (show && borderWidth > 0) {
-        setStyleSheet(m_staticSytles + QString("QDialog{border:%1px solid #%2;}")
-                      .arg(borderWidth).arg(color.rgba(), 0, 16));
+        setStyleSheet(m_staticSytles + QString("#%1{border:%2px solid #%3;}")
+                      .arg(this->objectName()).arg(borderWidth).arg(color.rgba(), 0, 16));
     }
     else {
-        setStyleSheet(m_staticSytles + "QDialog{border:none;}");
+        setStyleSheet(m_staticSytles + QString("#%1{border:none;}").arg(this->objectName()));
     }
 
     style()->unpolish(this);

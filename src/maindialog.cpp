@@ -89,11 +89,6 @@ void MainDialog::on_checkBoxShowBorder_stateChanged(int arg1)
     }
 }
 
-void MainDialog::on_checkBoxShowShadow_stateChanged(int arg1)
-{
-//    this->showShadow(arg1 == Qt::Checked);
-}
-
 void MainDialog::on_pushButtonFullScreen_clicked()
 {
     if (isFullScreen()) {
@@ -124,4 +119,9 @@ void MainDialog::on_pushButtonDialog_5_clicked()
 void MainDialog::on_pushButtonMemDilog_clicked()
 {
     m_memberDialog.show();
+}
+
+void MainDialog::on_pushButtonMin_2_clicked()
+{
+    showMinimized();
 }

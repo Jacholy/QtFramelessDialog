@@ -33,8 +33,6 @@ private slots:
 
     void on_checkBoxShowBorder_stateChanged(int arg1);
 
-    void on_checkBoxShowShadow_stateChanged(int arg1);
-
     void on_pushButtonFullScreen_clicked();
 
     void on_checkBoxMove_stateChanged(int arg1);
@@ -46,6 +44,8 @@ private slots:
     void on_pushButtonDialog_5_clicked();
 
     void on_pushButtonMemDilog_clicked();
+
+    void on_pushButtonMin_2_clicked();
 
 private:
     Ui::MainDialog *ui;

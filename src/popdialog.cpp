@@ -28,6 +28,7 @@ void PopDialog::setResizeable(bool resize)
     ui->pushButtonMin->setVisible(resize);
     ui->pushButtonMax->setVisible(resize);
 
+    setSizeGripEnabled(resize);
     CFramelessDialog::setResizeable(resize);
 }
 
