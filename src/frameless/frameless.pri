@@ -1,6 +1,4 @@
 
-QT += winextras
-
 HEADERS += \
     $$PWD/frameless_dialog.h \
 

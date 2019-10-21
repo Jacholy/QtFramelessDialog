@@ -7,7 +7,7 @@ NormalDialog::NormalDialog(QWidget *parent) :
 {
     ui->setupUi(this);
 
-//    setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
+    setWindowFlags(Qt::Dialog | Qt::WindowMinMaxButtonsHint | Qt::WindowCloseButtonHint);
 
     setSizeGripEnabled(true);
 }

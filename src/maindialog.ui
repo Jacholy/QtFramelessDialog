@@ -14,8 +14,12 @@
    <string>Frameless Dialog</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">#labelLogo {
-color: red;
+   <string notr="true">QDialog {
+	
+	background-color: rgb(242, 249, 255);
+}
+#labelLogo {
+	color: red;
 }</string>
   </property>
   <property name="sizeGripEnabled">

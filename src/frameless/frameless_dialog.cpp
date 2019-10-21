@@ -7,10 +7,15 @@
 #include <QDesktopWidget>
 #include <QApplication>
 
+// 使用native窗体，支持拖到桌面边缘放大，但是标题栏会出现闪烁
+#define USE_NATIVE_WINDOW   0
+
 CFramelessDialog::CFramelessDialog(QWidget *parent)
     : QDialog((parent))
 {
     setWindowFlags(Qt::Dialog | Qt::FramelessWindowHint);
+
+    setResizeable(m_bResizeable);
     limitMaximumSize();
 }
 
@@ -49,6 +54,26 @@ void CFramelessDialog::addSubTitleWidget(QWidget* widget)
 void CFramelessDialog::setResizeable(bool resizeable)
 {
     m_bResizeable = resizeable;
+
+#if USE_NATIVE_WINDOW
+    // 解决native父窗体消息异常问题
+    setAttribute(Qt::WA_DontCreateNativeAncestors);
+    QApplication::setAttribute(Qt::AA_DontCreateNativeWidgetSiblings);
+
+    // 设置背景透明，解决标题栏会闪烁问题，但是样式边框不见了!
+    //setAttribute(Qt::WA_TranslucentBackground);
+
+    // native window
+    HWND hwnd = (HWND)this->winId();
+    DWORD style = ::GetWindowLong(hwnd, GWL_STYLE);
+
+    if (m_bResizeable) {
+        // 支持系统程序边框，同时也带回了标题栏和边框,在nativeEvent()的WM_NCCALCSIZE会再次去掉标题栏
+        ::SetWindowLong(hwnd, GWL_STYLE, style | WS_MAXIMIZEBOX | WS_THICKFRAME | WS_CAPTION);
+    } else {
+        ::SetWindowLong(hwnd, GWL_STYLE, (style | WS_THICKFRAME | WS_CAPTION) & ~WS_MAXIMIZEBOX);
+    }
+#endif
 }
 
 void CFramelessDialog::setMoveable(bool move)
@@ -102,6 +127,40 @@ bool CFramelessDialog::nativeEvent(const QByteArray &eventType, void *message, l
 
     switch (msg->message)
     {
+#if USE_NATIVE_WINDOW
+    case WM_NCCALCSIZE:
+        return true;
+    case WM_GETMINMAXINFO:
+    {
+        if (::IsZoomed(msg->hwnd)) {
+            RECT frame = { 0, 0, 0, 0 };
+            AdjustWindowRectEx(&frame, WS_OVERLAPPEDWINDOW, FALSE, 0);
+
+            double dpr = this->devicePixelRatioF();
+
+            QMargins mgn;
+            if (m_bResizeable) {
+                mgn.setLeft(abs(frame.left)/dpr+0.5);
+                mgn.setTop(abs(frame.bottom)/dpr+0.5);
+                mgn.setRight(abs(frame.right)/dpr+0.5);
+                mgn.setBottom(abs(frame.bottom)/dpr+0.5);
+            }
+
+            // 最大化时隐藏边框
+            QDialog::setContentsMargins(mgn);
+            internalShowBorder(false, m_borderWidth, m_borderColor);
+            m_bJustMaxSize = true;
+        }else {
+            if (m_bJustMaxSize) {
+                int border = m_borderWidth > 0 ? m_borderWidth : 0;
+                QDialog::setContentsMargins(border, border, border, border);
+                internalShowBorder(m_borderWidth > 0, m_borderWidth, m_borderColor);
+                m_bJustMaxSize = false;
+            }
+        }
+        return false;
+    }
+#endif
     case WM_NCHITTEST:
     {
         *result = 0;

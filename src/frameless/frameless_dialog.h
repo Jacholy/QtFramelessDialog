@@ -53,6 +53,7 @@ protected:
     QColor m_borderColor;
     QColor m_deactiveBorderColor;
     QString m_staticSytles;
+    bool m_bJustMaxSize = false;
 };
 
 #endif // FRAMELESSSDIALOG_H
